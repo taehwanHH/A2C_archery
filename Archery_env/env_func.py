@@ -63,26 +63,6 @@ def humidity_trans(state, h_set):
 def wind_coeff(humidity):
     return -0.005*humidity+1
 
-# def v_polar2cartesian(polar_v):
-#     r = polar_v[:, 0]
-#     theta = polar_v[:, 1]
-#
-#     x = r * np.cos(theta)
-#     y = r * np.sin(theta)
-#
-#     return np.column_stack((x, y))
-#
-#
-# def optimal_policy(state, cartesian_action_set, action_set):
-#     eff_wind_vector = wind_coeff(state[2]) * np.array(polar2cartesian(state[0:2]))  # effective wind vector
-#     optimal_action = -1 * eff_wind_vector
-#
-#     distances = np.sqrt(np.sum((cartesian_action_set - optimal_action)**2, axis=1))
-#
-#     closest_index = np.argmin(distances)
-#
-#     return action_set[closest_index]
-
 
 def get_score(state, action):
     eff_wind_vector = wind_coeff(state[2]) * np.array(polar2cartesian(state[0:2]))  # effective wind vector

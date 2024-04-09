@@ -6,6 +6,7 @@ from param import Hyper_Param
 from Archery_env.env_func import *
 
 
+
 class ArcheryEnv:
     def __init__(self, vw_max=Hyper_Param['vw_max'], step_max=Hyper_Param['step_max']):
         # Define the state space
@@ -28,7 +29,7 @@ class ArcheryEnv:
         # self.cartesian_action_set = v_polar2cartesian(np.array(self.action_set))
         self.action_num = self.action_set.shape[0]
         self.action_space = gym.spaces.Discrete(self.action_num)
-
+        self.action_dim = self.action_set[0].shape[0]
         # Number of step per each episode
         self.step_max = step_max
         self.time_step = 0
@@ -37,24 +38,9 @@ class ArcheryEnv:
         self.state = [0, 0, 0]
         self.reward = 0
         self.cum_score = 0
-        # self.cum_rand_score = 0
-        # self.cum_optimal_score = 0
 
     def step(self, action):
         action = self.action_set[action]
-
-        # # Random action select
-        # rand_idx = np.random.randint(0, self.action_num)
-        # rand_action = self.action_set[rand_idx]
-        #
-        # [_, rand_score] = get_score(self.state, rand_action)
-        # self.cum_rand_score += rand_score
-        #
-        # # Optimal policy
-        # optimal_action = optimal_policy(self.state, self.cartesian_action_set, self.action_set)
-        # [_, optimal_score] = get_score(self.state, optimal_action)
-        # self.cum_optimal_score += optimal_score
-
         next_wind = wind_dir_trans(self.state)
         wind_mag = np.linalg.norm(np.array(next_wind), ord=2)
 
@@ -76,18 +62,16 @@ class ArcheryEnv:
         # reward setting
         self.reward = (-distance+score)*6
 
-        return np.array(next_state), self.reward, done, {}
+        return np.array(next_state), np.array(self.reward), np.array(done), {}
 
     def reset(self):
         self.time_step = 0
         h = self.humidity_set[np.random.randint(0, self.humidity_set.shape[0])]
         r = np.random.uniform(low=0, high=self.vw_max, size=(1,))
         theta = np.random.uniform(low=0, high=2*pi, size=(1,))
-        w = [r,theta]
+        w = [r, theta]
         self.state = np.append(w, h)
         self.reward = 0
         self.cum_score = 0
-        # self.cum_rand_score = 0
-        # self.cum_optimal_score = 0
 
         return np.array(self.state)
